@@ -1,0 +1,10 @@
+@font-face {
+  font-family: "helvetica";
+  src: local("helvetica"),
+    url("./../fonts/HelveticaNeue.ttc") format("truetype");
+}
+
+h1 {
+    font-family: "helvetica";
+}
+

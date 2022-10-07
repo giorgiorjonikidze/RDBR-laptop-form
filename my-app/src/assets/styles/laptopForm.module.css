@@ -1,0 +1,256 @@
+.main-block {
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f6f6f6;
+}
+
+.header {
+  display: flex;
+  margin-top: 91px;
+  margin-bottom: 27px;
+}
+
+.header-p1,
+.header-p2 {
+  font-family: "Helvetica";
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0em;
+}
+
+.header-p1 {
+  margin-right: 66px;
+  margin-left: 66px;
+}
+.header-p-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stroke {
+  width: 185px;
+  height: 2px;
+  background-color: #000;
+}
+
+/* form */
+.form-wrapper {
+  /* height: 973px; */
+  width: 1226px;
+  border-radius: 18px;
+  background-color: #fff;
+  box-sizing: border-box;
+  padding: 96px 174px 44px 174px;
+}
+
+.input {
+  font-family: "Helvetica";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 21px;
+  height: 60px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border: 1.8px solid #8ac0e2;
+  margin-top: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.input:focus {
+  border-color: #6499ff;
+  outline: 0;
+  background-color: #2b4bf20f;
+}
+
+.label {
+  font-family: "Helvetica";
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 21px;
+  letter-spacing: 0em;
+  margin-bottom: 8px;
+}
+
+.input-image-wrapper {
+  height: 423px;
+  width: 878px;
+  left: 174px;
+  top: 68px;
+  border-radius: 18px;
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='18' ry='18' stroke='%234386A9FF' stroke-width='4' stroke-dasharray='6%2c 14' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+}
+
+.input-image::-webkit-file-upload-button {
+  border: 0;
+  background-color: #62a1eb;
+  height: 60px;
+  width: 233px;
+  left: 496px;
+  top: 316px;
+  border-radius: 8px;
+  padding: 18px 60px 18px 60px;
+  content: "wsegweg";
+}
+
+.name-brand-wrapper {
+  display: flex;
+}
+
+.name-wrapper,
+.brand-select {
+  display: flex;
+  flex-direction: column;
+  width: 407px;
+}
+.name-wrapper {
+  margin-right: 63px;
+}
+
+.brand-select {
+  margin-top: 36px;
+}
+
+.divider {
+  height: 1px;
+  background-color: #c7c7c7;
+  width: 100%;
+  margin-top: 52px;
+  margin-bottom: 50px;
+}
+
+/* cpu  */
+.cpu-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cpu-core-wrapper,
+.cpu-thread-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 277px;
+}
+
+.cpu-select {
+  width: 277px;
+  margin-top: 38px;
+}
+
+/* ram  */
+
+.ram-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.ram-input {
+  width: 407px;
+}
+
+.ram-ssd-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 49px;
+}
+
+.ssd-wrapper,
+.hdd-wrapper {
+  display: flex;
+}
+
+.ssd-wrapper {
+  margin-right: 60px;
+}
+
+.ssd-hdd-wrapper {
+  display: flex;
+  margin-right: 200px;
+}
+
+.ssd-p {
+  font-family: "Helvetica";
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 21px;
+  margin: 0;
+  margin-bottom: 26px;
+}
+
+.ssd-label,
+.hdd-label {
+  font-family: "Helvetica";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 21px;
+}
+
+.ssd-input,
+.hdd-input {
+  width: 20px;
+  height: 20px;
+  margin-right: 18px;
+}
+
+.condition-wrapper {
+  margin-top: 54px;
+  margin-bottom: 76px;
+}
+
+.btn-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 45px;
+}
+
+.btn-back {
+  font-family: "Helvetica";
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 21px;
+  letter-spacing: 0.08em;
+  color: #62a1eb;
+  border: 0;
+  background-color: inherit;
+  cursor: pointer;
+}
+
+.btn {
+  border: 0;
+  height: 60px;
+  width: 176px;
+  border-radius: 8px;
+  background-color: #62a1eb;
+  font-family: "Helvetica";
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0em;
+  color: #fff;
+}
+
+.btn:hover {
+  background-color: #317ad0;
+}
+
+.btn:active {
+  background-color: #1a5dab;
+}
+
+/* isari  */
+.back-button {
+  position: absolute;
+  top: 90px;
+  left: 100px;
+  cursor: pointer;
+}
+
+.logo {
+  margin-top: 67px;
+  margin-bottom: 45px;
+}
