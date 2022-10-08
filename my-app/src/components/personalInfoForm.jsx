@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Joi from "joi-browser";
 import styles from "./../assets/styles/personalInfo.module.css";
+import { useHistory } from 'react-router-dom';
+
 
 const teamsUrl = "https://pcfy.redberryinternship.ge/api/teams";
 const positionsUrl = "https://pcfy.redberryinternship.ge/api/positions";
@@ -20,6 +22,8 @@ const PersonalInfoForm = () => {
   const [validNumber, setValidNumber] = useState(true);
   const [validTeams, setValidTeams] = useState(true);
   const [validPositions, setValidPositions] = useState(true);
+
+  const history = useHistory()
 
   useEffect(() => {
     const storageData = JSON.parse(localStorage.getItem("personal info"));
@@ -142,7 +146,7 @@ const PersonalInfoForm = () => {
     e.preventDefault();
     const error = validate();
     if(error.length === 0) {
-      console.log('sumbit')
+      history.push('/laptoppage')
     }
   };
 

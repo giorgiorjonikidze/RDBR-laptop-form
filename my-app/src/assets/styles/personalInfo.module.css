@@ -236,8 +236,8 @@ option {
   color: #e52f2f;
 }
 .invalid-hint {
-    color: #e52f2f;
-  }
-  .invalid-border {
-    border: 1.8px solid #e52f2f;
-  }
+  color: #e52f2f;
+}
+.invalid-border {
+  border: 1.8px solid #e52f2f;
+}
