@@ -1,0 +1,50 @@
+.main {
+  width: 100vw;
+  height: 100vh;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+}
+
+.back-button {
+  position: absolute;
+  top: 90px;
+  left: 100px;
+  cursor: pointer;
+}
+
+.wrapper {
+  width: 1250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.h1 {
+  margin-top: 80px;
+  margin-bottom: 100px;
+  font-family: "Helvetica" ;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 21px;
+}
+
+.li {
+  height: 205px;
+  width: 563px;
+  left: 371px;
+  top: 197px;
+  border-radius: 20px;
+  background-color: #EAFAFF;
+  list-style-type: none;
+  margin: 27px 25px;
+  padding: 0;
+  border: 1px solid #AED1EA;
+}
+
+.ul {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+}

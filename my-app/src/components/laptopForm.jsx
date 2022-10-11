@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import styles from "./../assets/styles/laptopForm.module.css";
 import axios from "axios";
 import Joi from "joi-browser";
+import { Base64 } from "js-base64";
 
 const cpuUrl = "https://pcfy.redberryinternship.ge/api/cpus";
 const brandsUrl = "https://pcfy.redberryinternship.ge/api/brands";
+const laptopCreateUrl = "https://pcfy.redberryinternship.ge/api/laptop/create";
 
 const LaptopForm = () => {
   // value states
@@ -19,51 +21,75 @@ const LaptopForm = () => {
   const [enteredPrice, setEnteredPrice] = useState("");
   const [enteredCondition, setEnteredCondition] = useState("");
 
+  const [testImage, setTestImage] = useState('')
+
+  //  image procesing
+  const [enteredImage, setEnteredImage] = useState();
+  const imageChangeHandler = (e) => {
+    const file = e.target.files[0];
+    console.log(URL.createObjectURL(file))
+    setTestImage(URL.createObjectURL(file));
+    const image = getBase64(file).then((base64) => setEnteredImage(base64));
+    setEnteredImage(image);
+  };
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
+
   // local storage
   useEffect(() => {
-    const storageData = JSON.parse(localStorage.getItem("laptop info"))
-    console.log(storageData)
-    if(storageData) {
-      if(storageData.laptopName.length !== 0) {
-        setEnteredLaptopName(storageData.laptopName)
+    const storageData = JSON.parse(localStorage.getItem("laptop info"));
+    if (storageData) {
+      if (storageData.laptopName.length !== 0) {
+        setEnteredLaptopName(storageData.laptopName);
       }
 
-      if(storageData.brand.length !== 0) {
-        setEnteredBrand(storageData.brand)
+      if (storageData.image.length !== 0) {
+        setEnteredImage(storageData.image);
       }
-      if(storageData.cpu.length !== 0) {
-        setEnteredCpu(storageData.cpu)
+
+      if (storageData.brand.length !== 0) {
+        setEnteredBrand(storageData.brand);
       }
-      if(storageData.laptopName.length !== 0) {
-        setEnteredLaptopName(storageData.laptopName)
+      if (storageData.cpu.length !== 0) {
+        setEnteredCpu(storageData.cpu);
       }
-      if(storageData.core.length !== 0) {
-        setEnteredCpuCore(storageData.core)
+      if (storageData.laptopName.length !== 0) {
+        setEnteredLaptopName(storageData.laptopName);
       }
-      if(storageData.thread.length !== 0) {
-        setEnteredCpuThread(storageData.thread)
+      if (storageData.core.length !== 0) {
+        setEnteredCpuCore(storageData.core);
       }
-      if(storageData.ram.length !== 0) {
-        setEnteredRam(storageData.ram)
+      if (storageData.thread.length !== 0) {
+        setEnteredCpuThread(storageData.thread);
       }
-      if(storageData.memory.length !== 0) {
-        setEnteredMemoryType(storageData.memory)
+      if (storageData.ram.length !== 0) {
+        setEnteredRam(storageData.ram);
       }
-      if(storageData.date.length !== 0) {
-        setEnteredDate(storageData.date)
+      if (storageData.memory.length !== 0) {
+        setEnteredMemoryType(storageData.memory);
       }
-      if(storageData.price.length !== 0) {
-        setEnteredPrice(storageData.price)
+      if (storageData.date.length !== 0) {
+        setEnteredDate(storageData.date);
       }
-      if(storageData.condition.length !== 0) {
-        setEnteredCondition(storageData.condition)
+      if (storageData.price.length !== 0) {
+        setEnteredPrice(storageData.price);
+      }
+      if (storageData.condition.length !== 0) {
+        setEnteredCondition(storageData.condition);
       }
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
       const formData = {
+        image: enteredImage,
         laptopName: enteredLaptopName,
         brand: enteredBrand,
         cpu: enteredCpu,
@@ -74,10 +100,11 @@ const LaptopForm = () => {
         date: enteredDate,
         price: enteredPrice,
         condition: enteredCondition,
-      }
-      localStorage.setItem("laptop info", JSON.stringify(formData))
-    }, 700)
+      };
+      localStorage.setItem("laptop info", JSON.stringify(formData));
+    }, 700);
   }, [
+    enteredImage,
     enteredLaptopName,
     enteredBrand,
     enteredCpu,
@@ -90,7 +117,6 @@ const LaptopForm = () => {
     enteredPrice,
     enteredCondition,
   ]);
-
 
   // validation
   const [validLaptopName, setValidLaptopName] = useState(true);
@@ -148,10 +174,8 @@ const LaptopForm = () => {
       : [];
 
     if (errors.includes("laptopName")) {
-      console.log("sheicavs da eroor");
       setValidLaptopName(false);
     } else {
-      console.log(" arsheicavs da araa eroor");
       setValidLaptopName(true);
     }
     if (errors.includes("brand")) {
@@ -199,15 +223,71 @@ const LaptopForm = () => {
     } else {
       setValidCondition(true);
     }
+    return errors;
   };
 
   // submit handler
   const submitHandler = (e) => {
     e.preventDefault();
-    validate();
+    const errors = validate();
+    if (errors.length === 0) {
+      // console.log("araa eroebi da end data");
+      const laptopData = JSON.parse(localStorage.getItem("laptop info"));
+      const userData = JSON.parse(localStorage.getItem("personal info"));
+      const dataForUpload = {
+        name: userData.name,
+        surname: userData.surname,
+        email: userData.email,
+        phone_number: userData.number,
+        team_id: 1,
+        position_id: 1,
+        token: "0a72c0ac0fdf855126c301571a75474b",
+        laptop_name: laptopData.laptopName,
+        laptop_image: testImage,
+        laptop_brand_id: 1,
+        laptop_cpu: laptopData.cpu,
+        laptop_cpu_cores: laptopData.core,
+        laptop_cpu_threads: laptopData.thread,
+        laptop_ram: laptopData.ram,
+        laptop_hard_drive_type: laptopData.memory,
+        laptop_state: laptopData.condition,
+        laptop_purchase_date: laptopData.date,
+        laptop_price: laptopData.price,
+      };
+      console.log(dataForUpload);
+     
+
+      // axios
+      //   .post(laptopCreateUrl, dataForUpload)
+      //   .then(function (response) {
+      //     console.log(response);
+      //   })
+      //   .catch(function (error) {
+      //     console.log(error);
+      //   });
+      const sendData = async () => {
+
+        const customConfig = {
+          headers: {
+              'Content-Type': 'multipart/form-data'
+          }
+      };
+
+      try {
+          const res = await axios.post(laptopCreateUrl, dataForUpload, customConfig)
+          
+          console.log(res.data)
+      } catch (error) {
+          console.log(error)
+          alert(error?.response.data.message)
+      }
+      }
+      sendData()
+    }
   };
 
   // change handlers
+
   const laptopNameChangeHandler = (e) => {
     setEnteredLaptopName(e.target.value);
   };
@@ -273,9 +353,15 @@ const LaptopForm = () => {
 
   return (
     <form onSubmit={submitHandler} className={styles.form}>
+      <img src={enteredImage} />
+
       {/* ასატვირთი სურათის */}
       <div className={styles["input-image-wrapper"]}>
-        <input className={styles["input-image"]} type="file" />
+        <input
+          onChange={imageChangeHandler}
+          className={styles["input-image"]}
+          type="file"
+        />
       </div>
 
       <div className={styles["name-brand-wrapper"]}>
@@ -308,7 +394,7 @@ const LaptopForm = () => {
 
         {/* laptop brand  */}
         <select
-        value={enteredBrand}
+          value={enteredBrand}
           className={`${styles["brand-select"]} ${
             !validBrand && styles["invalid-border"]
           }`}
@@ -326,7 +412,7 @@ const LaptopForm = () => {
 
       <div className={styles["cpu-wrapper"]}>
         <select
-        value={enteredCpu}
+          value={enteredCpu}
           className={`${styles["cpu-select"]} ${
             !validCpu && styles["invalid-border"]
           }`}
