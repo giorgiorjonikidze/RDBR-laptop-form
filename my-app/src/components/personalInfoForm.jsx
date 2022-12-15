@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Joi from "joi-browser";
 import styles from "./../assets/styles/personalInfo.module.css";
 import { useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import useFormPersist from "react-hook-form-persist";
 
 const teamsUrl = "https://pcfy.redberryinternship.ge/api/teams";
 const positionsUrl = "https://pcfy.redberryinternship.ge/api/positions";
@@ -15,33 +15,27 @@ const PersonalInfoForm = () => {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm();
 
-  const schema = {
-    name: Joi.string()
-      .regex(/^[ა-ჰ]{2,}$/)
-      .required(),
-    surname: Joi.string()
-      .regex(/^[ა-ჰ]{2,}$/)
-      .required(),
-    email: Joi.string()
-      .regex(/^\S+@redberry.ge$/)
-      .required(),
-    number: Joi.string()
-      .regex(/^(\+995[0-9]{9})$/)
-      .required(),
-    teams: Joi.string()
-      .regex(/^((?!თიმი).)*$/)
-      .required(),
-    positions: Joi.string()
-      .regex(/^((?!პოზიცია).)*$/)
-      .required(),
-  };
-  console.log("errors", errors);
+  useFormPersist("userInfo", {
+    watch,
+    setValue,
+    storage: window.localStorage,
+  });
+
+
+  const watchEverything = watch();
+
   const submitHandler = (e) => {
     console.log("submited");
-    console.log("errors", errors);
+    selectsValidation();
+  };
+
+  const onError = () => {
+    selectsValidation();
   };
 
   const [teams, setTeams] = useState("");
@@ -53,6 +47,22 @@ const PersonalInfoForm = () => {
 
   const [posdata, setposdata] = useState("");
 
+  const [validTeams, setValidTeams] = useState(true);
+  const [validPositions, setValidPositions] = useState(true);
+
+  const selectsValidation = () => {
+    if (enteredTeams === "თიმი") {
+      setValidTeams(false);
+    } else {
+      setValidTeams(true);
+    }
+    if (enteredPositions === "პოზიცია") {
+      setValidPositions(false);
+    } else {
+      setValidPositions(true);
+    }
+  };
+
   const teamsChangeHandler = (id, name) => {
     setEnteredTeams(name);
     setTeamsId(id);
@@ -61,7 +71,6 @@ const PersonalInfoForm = () => {
 
   const positionsChangeHandler = (id, name) => {
     setEnteredPositons(name);
-    console.log(id);
     setPositionsIsVisible(false);
   };
 
@@ -90,7 +99,7 @@ const PersonalInfoForm = () => {
       ));
       setTeams(teamsList);
     }
-    fetchingTeams();
+    const data = fetchingTeams();
   }, []);
   useEffect(() => {
     async function fetchingTeams() {
@@ -117,7 +126,6 @@ const PersonalInfoForm = () => {
       const filteredpositions = posdata.filter(
         (item) => item.team_id == teamsId
       );
-      console.log(filteredpositions);
       const teamsList = filteredpositions.map((item) => (
         <li
           key={item.id}
@@ -134,7 +142,10 @@ const PersonalInfoForm = () => {
   }, [enteredTeams]);
 
   return (
-    <form onSubmit={handleSubmit(submitHandler)} className={styles.form}>
+    <form
+      onSubmit={handleSubmit(submitHandler, onError)}
+      className={styles.form}
+    >
       <div className={styles["name-surname-wrapper"]}>
         <div className={styles["name-wrapper"]}>
           <label
@@ -145,7 +156,10 @@ const PersonalInfoForm = () => {
             სახელი
           </label>
           <input
-            {...register("name", { required: true, pattern: /^[ა-ჰ]{2,}$/ })}
+            {...register("name", {
+              required: true,
+              pattern: /^[ა-ჰ]{2,}$/,
+            })}
             className={`${styles["name-input"]} ${styles.input} ${
               errors.name && styles["invalid-border"]
             }`}
@@ -153,21 +167,26 @@ const PersonalInfoForm = () => {
             placeholder="გრიშა"
           />
           <p
-          className={`${styles.hint} ${errors.name && styles["invalid-hint"]}`}
+            className={`${styles.hint} ${
+              errors.name && styles["invalid-hint"]
+            }`}
           >
             მინიმუმ 2 სიმბოლო, ქართული ასოები
           </p>
         </div>
         <div className={styles["surname-wrapper"]}>
           <label
-          className={`${styles.label} ${
-            errors.surname && styles["invalid-label"]
-          }`}
+            className={`${styles.label} ${
+              errors.surname && styles["invalid-label"]
+            }`}
           >
             გვარი
           </label>
           <input
-            {...register("surname", { required: true, pattern: /^[ა-ჰ]{2,}$/ })}
+            {...register("surname", {
+              required: true,
+              pattern: /^[ა-ჰ]{2,}$/,
+            })}
             className={`${styles["surname-input"]} ${styles.input} ${
               errors.surname && styles["invalid-border"]
             }`}
@@ -175,9 +194,9 @@ const PersonalInfoForm = () => {
             placeholder="ბაგრატიონი"
           />
           <p
-          className={`${styles.hint} ${
-            errors.surname && styles["invalid-hint"]
-          }`}
+            className={`${styles.hint} ${
+              errors.surname && styles["invalid-hint"]
+            }`}
           >
             მინიმუმ 2 სიმბოლო, ქართული ასოები
           </p>
@@ -187,18 +206,11 @@ const PersonalInfoForm = () => {
       {/* select */}
 
       <div className={styles["select-wrapper"]}>
-        {/* <select onChange={teamsChangeHandler} >
-          <option selected hidden>
-            თიმი
-          </option>
-          {teams}
-        </select> */}
-
         <div className={`${styles["select-block"]}`}>
           <div
-            // className={`${styles["selected"]} ${
-            //   !validTeams && styles["invalid-border"]
-            // }`}
+            className={`${styles["selected"]} ${
+              !validTeams && styles["invalid-border"]
+            }`}
             onClick={selectTeamsChangeHandler}
           >
             <p className={styles["selected-text"]}>{enteredTeams}</p>
@@ -207,21 +219,15 @@ const PersonalInfoForm = () => {
         </div>
         <div className={`${styles["select-block"]}`}>
           <div
-            // className={`${styles["selected"]} ${
-            //   !validPositions && styles["invalid-border"]
-            // }`}
+            className={`${styles["selected"]} ${
+              !validPositions && styles["invalid-border"]
+            }`}
             onClick={selectPositionChangeHandler}
           >
             <p className={styles["selected-text"]}>{enteredPositions}</p>
           </div>
           {positionsIsVisible && <ul className={styles.ul}>{positions}</ul>}
         </div>
-        {/* <select onChange={positionsChangeHandler}>
-          <option selected hidden>
-            პოზიცია
-          </option>
-          {positions}
-        </select> */}
       </div>
 
       {/* mail & number input */}
@@ -229,9 +235,9 @@ const PersonalInfoForm = () => {
       <div className={styles["mail-number-wrapper"]}>
         <div className={styles["name-wrapper"]}>
           <label
-          className={`${styles.label} ${
-            errors.email && styles["invalid-label"]
-          }`}
+            className={`${styles.label} ${
+              errors.email && styles["invalid-label"]
+            }`}
           >
             მეილი
           </label>
@@ -247,23 +253,26 @@ const PersonalInfoForm = () => {
             placeholder="grish666@redberry.ge"
           />
           <p
-          className={`${styles.hint} ${
-            errors.email && styles["invalid-hint"]
-          }`}
+            className={`${styles.hint} ${
+              errors.email && styles["invalid-hint"]
+            }`}
           >
             უნდა მთავრდებოდეს @redberry.ge-ით
           </p>
         </div>
         <div className={styles["number-wrapper"]}>
           <label
-          className={`${styles.label} ${
-            errors.number && styles["invalid-label"]
-          }`}
+            className={`${styles.label} ${
+              errors.number && styles["invalid-label"]
+            }`}
           >
             ტელეფონის ნომერი
           </label>
           <input
-          {...register("number", {required: true, pattern: /^(\+995[0-9]{9})$/})}
+            {...register("number", {
+              required: true,
+              pattern: /^(\+995[0-9]{9})$/,
+            })}
             className={`${styles["number-input"]} ${styles.input} ${
               errors.number && styles["invalid-border"]
             }`}
@@ -271,9 +280,9 @@ const PersonalInfoForm = () => {
             placeholder="+995 598 00 07 01"
           />
           <p
-          className={`${styles.hint} ${
-            errors.number && styles["invalid-hint"]
-          }`}
+            className={`${styles.hint} ${
+              errors.number && styles["invalid-hint"]
+            }`}
           >
             უნდა აკმაყოფილებდეს ქართული მობ-ნომრის ფორმატს
           </p>
