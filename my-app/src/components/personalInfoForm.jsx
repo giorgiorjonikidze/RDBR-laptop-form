@@ -11,6 +11,52 @@ const positionsUrl = "https://pcfy.redberryinternship.ge/api/positions";
 const PersonalInfoForm = () => {
   const [enteredTeams, setEnteredTeams] = useState("თიმი");
   const [enteredPositions, setEnteredPositons] = useState("პოზიცია");
+  const [teams, setTeams] = useState("");
+  const [teamsIsVisible, setTeamsIsVisible] = useState(false);
+  const [teamsId, setTeamsId] = useState("");
+  const [positionId, setPositionId] = useState("");
+
+  const [positions, setPositions] = useState("");
+  const [positionsIsVisible, setPositionsIsVisible] = useState(false);
+
+  const [posdata, setposdata] = useState("");
+
+  const [validTeams, setValidTeams] = useState(true);
+  const [validPositions, setValidPositions] = useState(true);
+
+  const history = useHistory();
+
+  useEffect(() => {
+    const teamsPosSaver = (
+      teamsId,
+      teamsName,
+      enteredPositions,
+      positionId
+    ) => {
+      const data = {
+        teamsId: teamsId,
+        teamsName: teamsName,
+        enteredPositions: enteredPositions,
+        positionId: positionId,
+      };
+      localStorage.setItem("teams", JSON.stringify(data));
+    };
+    setTimeout(() => {
+      teamsPosSaver(teamsId, enteredTeams, enteredPositions, positionId);
+    }, 700);
+
+    // console.log(enteredTeams)
+  }, [enteredPositions, enteredTeams, teamsId]);
+
+  useEffect(() => {
+    const storageData = JSON.parse(localStorage.getItem("teams"));
+    console.log(storageData);
+    if (storageData) {
+      setEnteredTeams(storageData.teamsName);
+      setEnteredPositons(storageData.enteredPositions);
+      setPositionId(storageData.positionId);
+    }
+  }, []);
 
   const {
     register,
@@ -26,29 +72,22 @@ const PersonalInfoForm = () => {
     storage: window.localStorage,
   });
 
-
-  const watchEverything = watch();
-
   const submitHandler = (e) => {
     console.log("submited");
     selectsValidation();
+    if (
+      validTeams === true &&
+      validPositions === true &&
+      enteredTeams !== "თიმი" &&
+      enteredPositions !== "პოზიცია"
+    ) {
+      history.push("/laptoppage");
+    }
   };
 
   const onError = () => {
     selectsValidation();
   };
-
-  const [teams, setTeams] = useState("");
-  const [teamsIsVisible, setTeamsIsVisible] = useState(false);
-  const [teamsId, setTeamsId] = useState("");
-
-  const [positions, setPositions] = useState("");
-  const [positionsIsVisible, setPositionsIsVisible] = useState(false);
-
-  const [posdata, setposdata] = useState("");
-
-  const [validTeams, setValidTeams] = useState(true);
-  const [validPositions, setValidPositions] = useState(true);
 
   const selectsValidation = () => {
     if (enteredTeams === "თიმი") {
@@ -61,23 +100,31 @@ const PersonalInfoForm = () => {
     } else {
       setValidPositions(true);
     }
+
+    if (posdata[positionId - 1]?.team_id !== teamsId) {
+      setValidPositions(false);
+    } else {
+      setValidPositions(true);
+    }
   };
 
   const teamsChangeHandler = (id, name) => {
     setEnteredTeams(name);
     setTeamsId(id);
     setTeamsIsVisible(false);
+    setValidTeams(true)
   };
 
   const positionsChangeHandler = (id, name) => {
     setEnteredPositons(name);
     setPositionsIsVisible(false);
+    setPositionId(id);
+    setValidPositions
   };
 
   const selectTeamsChangeHandler = () => {
     setPositionsIsVisible(false);
     setTeamsIsVisible(!teamsIsVisible);
-    console.log(true);
   };
   const selectPositionChangeHandler = () => {
     setTeamsIsVisible(false);
@@ -117,6 +164,7 @@ const PersonalInfoForm = () => {
       ));
       setPositions(teamsList);
       setposdata(response.data.data);
+      console.log(response.data.data);
     }
     fetchingTeams();
   }, []);
@@ -138,8 +186,14 @@ const PersonalInfoForm = () => {
         </li>
       ));
       setPositions(teamsList);
+      console.log(
+        "teams sheicvala",
+        teamsId,
+        posdata[positionId - 1],
+        positionId
+      );
     }
-  }, [enteredTeams]);
+  }, [enteredTeams, enteredPositions]);
 
   return (
     <form
